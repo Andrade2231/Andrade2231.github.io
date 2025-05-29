@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasas de Cambio en Tiempo Real</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000000; /* Fondo negro para el body */
+            margin: 0;
+            color: #f0f0f0; /* Color de texto general claro para el fondo oscuro */
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 25px 0; /* Espacio superior e inferior para el encabezado */
+            background-color: #000000; /* Fondo negro para el encabezado */
+            color: #ff9900; /* Color del título, puedes mantener el naranja */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            margin: 0; /* Elimina márgenes predeterminados del h1 */
+        }
+
+        /* Nuevo contenedor para la sección blanca central */
+        .main-content-wrapper {
+            flex-grow: 1; /* Permite que este div ocupe el espacio restante */
+            width: 100%;
+            max-width: 1200px; /* Ancho máximo para el contenido blanco */
+            background-color: #ffffff; /* Fondo blanco para el centro */
+            color: #333333; /* Color de texto oscuro para el fondo blanco */
+            padding: 40px 20px; /* Relleno interno */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Sombra para destacarlo */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra el contenido (texto y contenedor de tasas) horizontalmente */
+            justify-content: center; /* Centra verticalmente el contenido dentro de este wrapper */
+        }
+
+        .description-text {
+            width: 90%; /* Ajusta el ancho dentro del wrapper blanco */
+            max-width: 800px;
+            text-align: center;
+            color: #333333; /* Texto oscuro para el fondo blanco */
+            margin-bottom: 40px;
+            line-height: 1.7;
+            font-size: 1.15em;
+            font-weight: 300;
+        }
+
+        .container {
+            background-color: #f0f0f0; /* Fondo más claro para el contenedor de tasas */
+            padding: 30px; /* Ajustado el padding */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+            text-align: center;
+            border: 1px solid #e0e0e0; /* Borde muy sutil */
+        }
+
+        /* Colores de texto para el contenido de las tasas (ahora en fondo blanco/gris claro) */
+        .currency-pair {
+            font-weight: 600;
+            color: #0056b3; /* Un azul más oscuro y legible */
+            text-shadow: none; /* Elimina la sombra que no contrastaría bien en blanco */
+        }
+        .rate-value {
+            color: #1a7d00; /* Un verde más oscuro y legible */
+            font-size: 2.2em;
+            margin-left: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: none; /* Elimina la sombra */
+        }
+        .last-updated {
+            font-size: 0.9em;
+            color: #666666; /* Gris más oscuro para la legibilidad */
+            margin-top: 25px;
+            font-style: italic;
+        }
+        .loading {
+            color: #0056b3;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        .error {
+            color: #cc0000; /* Rojo más fuerte para errores */
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000000; /* Fondo negro para el pie de página */
+            color: orange; /* Color de texto suave para el pie de página */
+            font-size: 0.85em;
+            margin-top: auto; /* Empuja el pie de página hacia abajo */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tasas de Cambio Euro y Dólar a Peso Colombiano</h1>
+    </header>
+
+    <div class="main-content-wrapper">
+        <p class="description-text">El **euro (EUR)** y el **dólar estadounidense (USD)** operan como las divisas más relevantes en el mercado cambiario colombiano, dictando gran parte del flujo económico internacional del país. La relación entre estas monedas y el **peso colombiano (COP)** determina el costo de las transacciones globales y el poder adquisitivo en Colombia.</p>
+
+        <div class="container">
+            <div id="loading" class="loading">Cargando tasas de cambio...</div>
+            <div id="exchange-rates">
+                <div class="rate-display">
+                    <span class="currency-pair">1 EUR a COP:</span>
+                    <span id="eur-cop-rate" class="rate-value">--.--</span>
+                </div>
+                <div class="rate-display">
+                    <span class="currency-pair">1 USD a COP:</span>
+                    <span id="usd-cop-rate" class="rate-value">--.--</span>
+                </div>
+            </div>
+            <div class="last-updated" id="last-updated"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Empresa XYZ - Diseño para aprendizaje</p>
+    </footer>
+
+    <script>
+        const API_KEY = 'e8f785ab637e80e0856aa3a6';
+        const BASE_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/`;
+
+        const eurCopRateElement = document.getElementById('eur-cop-rate');
+        const usdCopRateElement = document.getElementById('usd-cop-rate');
+        const lastUpdatedElement = document.getElementById('last-updated');
+        const loadingElement = document.getElementById('loading');
+        const exchangeRatesContainer = document.getElementById('exchange-rates');
+
+        async function fetchExchangeRates() {
+            loadingElement.style.display = 'block';
+            exchangeRatesContainer.style.display = 'none';
+            lastUpdatedElement.textContent = ''; // Limpiar el texto de última actualización
+
+            try {
+                const eurResponse = await fetch(`${BASE_URL}EUR`);
+                const eurData = await eurResponse.json();
+
+                const usdResponse = await fetch(`${BASE_URL}USD`);
+                const usdData = await usdResponse.json();
+
+                if (eurData.result === 'success' && usdData.result === 'success') {
+                    const eurToCop = eurData.conversion_rates.COP;
+                    const usdToCop = usdData.conversion_rates.COP;
+
+                    eurCopRateElement.textContent = eurToCop.toFixed(4);
+                    usdCopRateElement.textContent = usdToCop.toFixed(4);
+
+                    const updateTime = new Date(eurData.time_last_update_unix * 1000).toLocaleString('es-CO');
+                    lastUpdatedElement.textContent = `Última actualización: ${updateTime}`;
+
+                    loadingElement.style.display = 'none';
+                    exchangeRatesContainer.style.display = 'block';
+
+                } else {
+                    throw new Error('Error al obtener datos de la API. ' + (eurData.result || usdData.result));
+                }
+
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+                loadingElement.style.display = 'none';
+                exchangeRatesContainer.innerHTML = '<div class="error">No se pudieron cargar las tasas de cambio. Inténtalo de nuevo más tarde.</div>';
+                lastUpdatedElement.textContent = '';
+            }
+        }
+
+        fetchExchangeRates();
+
+        // setInterval(fetchExchangeRates, 300000);
+    </script>
+</body>
+</html>
