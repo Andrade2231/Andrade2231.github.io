@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Principal</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        /* Encabezado con fondo negro y texto naranja */
+        header {
+            background-color: black;
+            color: orange;
+            padding: 20px 40px;
+        }
+
+        header h1, header h2 {
+            margin: 10px 0;
+        }
+
+        /* Barra de navegación centrada */
+        nav {
+            background-color: black;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: orange;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Presentación con estilo moderno */
+        .presentacion {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            background-color: white;
+        }
+
+        .presentacion .contenido {
+            max-width: 700px;
+        }
+
+        .presentacion h3 {
+            font-size: 28px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .presentacion h4 {
+            font-size: 22px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .presentacion p, .presentacion li {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Imágenes centradas */
+        .imagenes {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        img {
+            margin: 0 20px;
+        }
+
+        footer
+        {
+            background-color: black;
+            color: orange;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 0;
+        }
+        .imagenes
+        {
+            text-align: center;
+            background-color: black;
+            padding: 40px 0;
+            margin: 0;
+        }
+
+        /* Estilos para el iframe */
+        .iframe-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            display: none; /* Por defecto, ocultar el iframe */
+        }
+
+        .iframe-container iframe {
+            width: 80%; /* Ajusta el ancho según sea necesario */
+            height: 900px; /* Ajusta la altura según el contenido de Comprar.html */
+            border: none; /* ELIMINA EL BORDE DEL IFRAME */
+            box-shadow: none; /* ELIMINA LA SOMBRA SI LA HABÍA Y NO LA QUIERES */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Empresa XYZ – Mercado Cambiario</h1>
+        <h2><u>COMPRA VENTA DE MONEDA EXTRANJERA</u></h2>
+    </header>
+
+
+    <nav>
+        <a href="indicadores.html" id="linkIndicadores" target="_blank">Consultar indicadores económicos</a>
+        <a href="tasas.html" id="linkTasas" target="_blank">Consultar tasas de compra/venta</a>
+        <a href="#" id="linkComprarMoneda">Comprar Moneda Extranjera</a>
+        <a href="#">Vender Moneda Extranjera</a>
+    </nav>
+
+    <main id="mainContent">
+        <div class="presentacion" id="presentacionSection">
+            <div class="contenido">
+                <h3>Presentación del Código HTML: Página Principal</h3>
+                <p>
+                    Este código HTML representa la estructura básica de la página principal de una aplicación web dedicada a la compra y venta de moneda extranjera, denominada "Empresa XYZ - Mercado Cambiario". Ha sido diseñado para ser una interfaz sencilla y funcional que permite a los usuarios interactuar con las operaciones fundamentales del mercado cambiario.
+                </p>
+                <h4>Objetivo de la Página:</h4>
+                <p>
+                    El propósito principal de esta página es ofrecer a los usuarios un punto de entrada claro para:
+                </p>
+                <ul>
+                    <li>Visualizar información económica relevante (como indicadores y tasas de cambio).</li>
+                    <li>Realizar operaciones de compra y venta de divisas.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="imagenes" id="imagenesSection">
+            <img src="img/divisa.png" alt="" width="200">
+        </div>
+    </main>
+
+
+    <div class="iframe-container" id="comprarIframeContainer">
+        <iframe src="Comprar.html" title="Comprar Moneda Extranjera"></iframe>
+    </div>
+
+</body>
+<footer>
+    <p>&copy; 2025 Empresa XYZ - Diseño para aprendizaje</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const presentacionSection = document.getElementById('presentacionSection');
+        const imagenesSection = document.getElementById('imagenesSection');
+        const comprarIframeContainer = document.getElementById('comprarIframeContainer');
+        const linkComprarMoneda = document.getElementById('linkComprarMoneda');
+
+        // Función para ocultar el contenido principal y mostrar el iframe
+        function mostrarComprar() {
+            presentacionSection.style.display = 'none'; // Oculta la sección de presentación
+            imagenesSection.style.display = 'none';     // Oculta la sección de imágenes
+            comprarIframeContainer.style.display = 'flex'; // Muestra el iframe
+        }
+
+        // Evento para el enlace "Comprar Moneda Extranjera"
+        linkComprarMoneda.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita que el enlace recargue la página
+            mostrarComprar();
+        });
+    });
+</script>
+
+</html>
+

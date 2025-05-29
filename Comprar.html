@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página "Compra de Moneda Extranjera"</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .form-group label {
+            flex: 1;
+            margin-right: 10px;
+            font-weight: bold;
+            color: #333; /* Keep label color readable */
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #fff; /* Ensure input fields have a white background */
+            color: #333; /* Keep input text readable */
+        }
+        .form-group input[type="text"][readonly],
+        .form-group input[type="number"][readonly] {
+            background-color: #e9e9e9;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button-group button.save {
+            background-color: #28a745;
+            color: white;
+        }
+        .button-group button.clear {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .required::after {
+            content: '*';
+            color: red;
+            margin-left: 5px;
+        }
+
+        /* Estilos para la tabla de transacciones */
+        .transactions-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .transactions-container h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #transactionsTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #transactionsTable th,
+        #transactionsTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #transactionsTable th {
+            background-color: black; /* Black background for header */
+            color: orange; /* Orange text for header */
+            font-weight: bold;
+        }
+        #transactionsTable tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+       
+    </style>
+</head>
+<body>
+    
+
+    <main style="flex-grow: 1;">
+        <div class="container">
+            <h2>"Compra de Moneda Extranjera"</h2>
+            <form id="compraMonedaForm">
+                <div class="form-group">
+                    <label for="tipoDocumento" class="required">Tipo de Documento</label>
+                    <select id="tipoDocumento">
+                        <option value="1">Seleccione una opción</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numeroDocumento" class="required">Número de Documento</label>
+                    <input type="text" id="numeroDocumento">
+                </div>
+                <div class="form-group">
+                    <label for="nombreCliente">Nombre de Cliente</label>
+                    <input type="text" id="nombreCliente" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="monedaComprar" class="required">Moneda a Comprar</label>
+                    <select id="monedaComprar">
+                        <option value="1">Seleccione una opción</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tasaCompra">Tasa de Compra</label>
+                    <input type="number" id="tasaCompra" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="cantidadComprar" class="required">Cantidad a Comprar</label>
+                    <input type="number" id="cantidadComprar" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="valorPagar">Valor a Pagar al Cliente</label>
+                    <input type="number" id="valorPagar" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fecha">Fecha</label>
+                    <input type="text" id="fecha" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="hora">Hora</label>
+                    <input type="text" id="hora" readonly>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="save" id="guardarTransaccion">Guardar Transacción</button>
+                    <button type="button" class="clear" id="limpiarFormulario">Limpiar Formulario</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="transactions-container">
+            <h3>Transacciones Realizadas</h3>
+            <table id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th>Tipo Doc.</th>
+                        <th>No. Doc.</th>
+                        <th>Cliente</th>
+                        <th>Moneda</th>
+                        <th>Tasa Compra</th>
+                        <th>Cantidad</th>
+                        <th>Valor a Pagar</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let contadorUsuariosGenerados = 1;
+
+        let clientes = [
+            { documento: "", tipoDocumento: "", nombre: "" }
+        ];
+
+        const tiposDocumentoPermitidos = [
+            { codigo: "CC", nombre: "Cédula de Ciudadanía" },
+            { codigo: "TI", nombre: "Tarjeta de Identidad" },
+            { codigo: "CE", nombre: "Cédula de Extranjería" }
+        ];
+
+        const tasasMonedas = [
+            { codigo: "USD", nombre: "Dólar Estadounidense", tasaCompra: 3900, tasaVenta: 4000 },
+            { codigo: "EUR", nombre: "Euro", tasaCompra: 4200, tasaVenta: 4350 },
+            { codigo: "GBP", nombre: "Libra Esterlina", tasaCompra: 4900, tasaVenta: 5050 }
+        ];
+
+        const tipoDocumentoSelect = document.getElementById('tipoDocumento');
+        const monedaComprarSelect = document.getElementById('monedaComprar');
+        const fechaInput = document.getElementById('fecha');
+        const horaInput = document.getElementById('hora');
+        const numeroDocumentoInput = document.getElementById('numeroDocumento');
+        const nombreClienteInput = document.getElementById('nombreCliente');
+        const tasaCompraInput = document.getElementById('tasaCompra');
+        const cantidadComprarInput = document.getElementById('cantidadComprar');
+        const valorPagarInput = document.getElementById('valorPagar');
+        const limpiarFormularioBtn = document.getElementById('limpiarFormulario');
+        const guardarTransaccionBtn = document.getElementById('guardarTransaccion');
+        const transactionsTableBody = document.querySelector('#transactionsTable tbody');
+
+        function actualizarFechaHora() {
+            const now = new Date();
+            fechaInput.value = now.toLocaleDateString('es-CO');
+            horaInput.value = now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            tipoDocumentoSelect.innerHTML = '<option value="1">Seleccione una opción</option>';
+            monedaComprarSelect.innerHTML = '<option value="1">Seleccione una opción</option>';
+
+            tiposDocumentoPermitidos.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo.codigo;
+                option.textContent = tipo.nombre;
+                tipoDocumentoSelect.appendChild(option);
+            });
+
+            tasasMonedas.forEach(moneda => {
+                const option = document.createElement('option');
+                option.value = moneda.codigo;
+                option.textContent = moneda.nombre;
+                monedaComprarSelect.appendChild(option);
+            });
+
+            actualizarFechaHora();
+
+            const diaSemana = new Date().getDay();
+            if (diaSemana === 0 || diaSemana === 6) {
+                alert("Transacción no permitida el día de hoy. Las transacciones solo se realizan de Lunes a Viernes.");
+            }
+        });
+
+        numeroDocumentoInput.addEventListener('input', function() {
+            const tipoDoc = document.getElementById('tipoDocumento').value;
+            const numDoc = this.value;
+
+            if (tipoDoc !== '1' && numDoc.trim() !== '') {
+                const clienteExistente = clientes.find(c => c.documento === numDoc && c.tipoDocumento === tipoDoc);
+
+                if (clienteExistente) {
+                    nombreClienteInput.value = clienteExistente.nombre;
+                } else {
+                    const nuevoNombre = `Usuario-${contadorUsuariosGenerados}`;
+                    nombreClienteInput.value = nuevoNombre;
+                }
+            } else {
+                nombreClienteInput.value = '';
+            }
+        });
+
+        document.getElementById('tipoDocumento').addEventListener('change', function() {
+            if (numeroDocumentoInput.value.trim() !== '') {
+                numeroDocumentoInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+        monedaComprarSelect.addEventListener('change', function() {
+            const codigoMoneda = this.value;
+            const moneda = tasasMonedas.find(m => m.codigo === codigoMoneda);
+            if (moneda) {
+                tasaCompraInput.value = moneda.tasaCompra;
+            } else {
+                tasaCompraInput.value = '';
+            }
+            calcularValorPagar();
+        });
+
+        cantidadComprarInput.addEventListener('input', calcularValorPagar);
+        tasaCompraInput.addEventListener('input', calcularValorPagar);
+
+        function calcularValorPagar() {
+            const tasaCompra = parseFloat(tasaCompraInput.value);
+            const cantidadComprar = parseFloat(cantidadComprarInput.value);
+
+            if (!isNaN(tasaCompra) && !isNaN(cantidadComprar) && cantidadComprar >= 0) {
+                valorPagarInput.value = (tasaCompra * cantidadComprar).toFixed(2);
+            } else {
+                valorPagarInput.value = '';
+            }
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('compraMonedaForm').reset();
+            nombreClienteInput.value = '';
+            tasaCompraInput.value = '';
+            valorPagarInput.value = '';
+            actualizarFechaHora();
+        }
+
+        limpiarFormularioBtn.addEventListener('click', limpiarFormulario);
+
+        guardarTransaccionBtn.addEventListener('click', function() {
+            const tipoDoc = tipoDocumentoSelect.value;
+            const numDoc = numeroDocumentoInput.value.trim();
+            const nombreCliente = nombreClienteInput.value.trim();
+            const monedaComprar = monedaComprarSelect.value;
+            const cantidadComprar = parseFloat(cantidadComprarInput.value);
+
+            if (tipoDoc === '1' || numDoc === '' || monedaComprar === '1' || isNaN(cantidadComprar) || cantidadComprar <= 0) {
+                alert('Por favor, complete todos los campos obligatorios y asegúrese de que la cantidad a comprar sea mayor que cero.');
+                return;
+            }
+
+            const clienteYaExiste = clientes.find(c => c.documento === numDoc && c.tipoDocumento === tipoDoc);
+
+            if (!clienteYaExiste || (clienteYaExiste && nombreCliente.startsWith("Usuario-") && clienteYaExiste.nombre !== nombreCliente)) {
+                if (!clienteYaExiste) {
+                     clientes.push({
+                        documento: numDoc,
+                        tipoDocumento: tipoDoc,
+                        nombre: nombreCliente
+                    });
+                     contadorUsuariosGenerados++;
+                }
+                console.log("Nuevo cliente añadido:", { documento: numDoc, tipoDocumento: tipoDoc, nombre: nombreCliente });
+            }
+
+            actualizarFechaHora();
+
+            const transaccion = {
+                tipoDocumento: tipoDocumentoSelect.options[tipoDocumentoSelect.selectedIndex].text,
+                numeroDocumento: numDoc,
+                nombreCliente: nombreCliente,
+                monedaComprar: monedaComprarSelect.options[monedaComprarSelect.selectedIndex].text,
+                tasaCompra: parseFloat(tasaCompraInput.value),
+                cantidadComprar: cantidadComprar,
+                valorPagar: parseFloat(valorPagarInput.value),
+                fecha: fechaInput.value,
+                hora: horaInput.value
+            };
+
+            const newRow = transactionsTableBody.insertRow();
+            newRow.insertCell().textContent = transaccion.tipoDocumento;
+            newRow.insertCell().textContent = transaccion.numeroDocumento;
+            newRow.insertCell().textContent = transaccion.nombreCliente;
+            newRow.insertCell().textContent = transaccion.monedaComprar;
+            newRow.insertCell().textContent = transaccion.tasaCompra.toLocaleString('es-CO', {style: 'currency', currency: 'COP'});
+            newRow.insertCell().textContent = transaccion.cantidadComprar.toFixed(2);
+            newRow.insertCell().textContent = transaccion.valorPagar.toLocaleString('es-CO', {style: 'currency', currency: 'COP'});
+            newRow.insertCell().textContent = transaccion.fecha;
+            newRow.insertCell().textContent = transaccion.hora;
+
+            alert('Transacción guardada exitosamente!');
+            console.log('Transacción guardada:', transaccion);
+
+            limpiarFormulario();
+        });
+    </script>
+
+   
+
+</body>
+</html>

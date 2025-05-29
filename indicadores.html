@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Indicadores Económicos en Tiempo Real</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      padding-bottom: 80px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+      border: 1px solid #ff8c00; /* Naranja medio para el borde de la tabla */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para un efecto flotante */
+    }
+    th, td {
+      border: 1px solid #ddd; /* Borde más claro para las celdas */
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #ff8c00; /* Fondo naranja para los encabezados */
+      color: white; /* Texto blanco para contraste */
+      font-weight: bold;
+    }
+    /* Estilo para filas impares para alternar colores */
+    tr:nth-child(odd) {
+      background-color: #fff3e0; /* Naranja muy claro para filas impares */
+    }
+    /* Estilo al pasar el ratón por encima de las filas */
+    tr:hover {
+      background-color: #ffe0b2; /* Naranja más claro al pasar el ratón */
+    }
+    .loading {
+      color: gray;
+    }
+    /* Encabezado con fondo negro y texto naranja */
+    header {
+      background-color: black;
+      color: orange;
+      padding: 20px 40px;
+    }
+
+    header h1, header h2 {
+      margin: 10px 0;
+    }
+
+    footer {
+      background-color: black;
+      color: orange;
+      text-align: center;
+      padding: 20px 0;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+    <header>
+        <h2 style="text-align:center;">Indicadores Económicos en Tiempo Real</h2>
+    </header>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Indicador</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dólar TRM</td>
+        <td id="trm" class="loading">Cargando...</td>
+      </tr>
+      <tr>
+        <td>Euro</td>
+        <td id="euro" class="loading">Cargando...</td>
+      </tr>
+      <tr>
+        <td>Libra de Café</td>
+        <td id="cafe" class="loading">Cargando...</td>
+      </tr>
+      <tr>
+        <td>Barril de Petróleo WTI</td>
+        <td id="petroleo" class="loading">Cargando...</td>
+      </tr>
+      <tr>
+        <td>Onza de Oro</td>
+        <td id="oro" class="loading">Cargando...</td>
+      </tr>
+      <tr>
+        <td>Libra de Azúcar</td>
+        <td id="azucar" class="loading">Cargando...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    async function obtenerIndicadores() {
+      try {
+        // Dólar TRM
+        const trmResponse = await fetch('https://www.datos.gov.co/resource/ceyp-9c7c.json?$order=vigenciadesde DESC&$limit=1');
+        const trmData = await trmResponse.json();
+        const trmValor = parseFloat(trmData[0].valor).toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+        document.getElementById('trm').innerText = trmValor;
+
+        // Euro - Simulación (reemplazar con API real si está disponible)
+        const euroValor = (parseFloat(trmData[0].valor) * 0.85).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }); // Supuesto: 1 EUR = 0.85 USD
+        document.getElementById('euro').innerText = euroValor;
+
+        // Libra de Café - Simulación (reemplazar con API real si está disponible)
+        const cafeValor = (2.12 * parseFloat(trmData[0].valor)).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }); // Supuesto: 2.12 USD por libra
+        document.getElementById('cafe').innerText = cafeValor;
+
+        // Barril de Petróleo WTI - Simulación (reemplazar con API real si está disponible)
+        const petroleoValor = (57.93 * parseFloat(trmData[0].valor)).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }); // Supuesto: 57.93 USD por barril
+        document.getElementById('petroleo').innerText = petroleoValor;
+
+        // Onza de Oro - Simulación (reemplazar con API real si está disponible)
+        const oroValor = (12398516.57).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }); // Valor en COP
+        document.getElementById('oro').innerText = oroValor;
+
+        // Libra de Azúcar - Simulación (reemplazar con API real si está disponible)
+        const azucarValor = (0.21 * parseFloat(trmData[0].valor)).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }); // Supuesto: 0.21 USD por libra
+        document.getElementById('azucar').innerText = azucarValor;
+
+      } catch (error) {
+        console.error('Error al obtener los indicadores:', error);
+        const elementos = document.querySelectorAll('.loading');
+        elementos.forEach(el => el.innerText = 'No disponible');
+      }
+    }
+
+    obtenerIndicadores();
+    setInterval(obtenerIndicadores, 3600000); // Actualiza cada hora (3600000 ms)
+
+  </script>
+  <footer>
+    <p>&copy; 2025 Empresa XYZ - Diseño para aprendizaje</p>
+</footer>
+</body>
+</html>
